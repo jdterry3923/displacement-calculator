@@ -922,13 +922,20 @@ function calcGroup() {
     rows.push({ date: ds, dow, baseRooms, transientADR, available, displaced, incremental, netRate, nightNet, occ: baseRooms / keys });
   }
 
-  // Min acceptable rate (for the block as a whole)
-  // Worst case: need rate where even fully displaced rooms break even
-  // netRate >= transientADR → rate >= (transientADR + breakCost + parkCost) / (1 - commPct)
-  const maxADR = Math.max(...rows.filter(r => !r.noData).map(r => r.transientADR));
-  const minRateDisplaced = (maxADR + breakCost + parkCost) / (1 - commPct);
-  const minRateIncremental = (varCost + breakCost + parkCost) / (1 - commPct);
-  const minRate = Math.max(minRateDisplaced, minRateIncremental); // displaced is always the binding constraint
+  // Min acceptable rate: solve for rate where total net impact = $0
+  // net_rate = rate * (1-comm) - breakfast - parking
+  // total_net = sum(displaced_i * (net_rate - ADR_i)) + sum(incremental_i * (net_rate - varCost)) = 0
+  // net_rate * totalRooms = sum(displaced_i * ADR_i) + varCost * totalIncremental
+  // rate = (net_rate + breakfast + parking) / (1 - comm)
+  const validRows = rows.filter(r => !r.noData);
+  const totalRooms = validRows.reduce((s, r) => s + r.displaced + r.incremental, 0);
+  const weightedDisplacedADR = validRows.reduce((s, r) => s + r.displaced * r.transientADR, 0);
+  const totalIncrementalRooms = validRows.reduce((s, r) => s + r.incremental, 0);
+  let minRate = 0;
+  if (totalRooms > 0) {
+    const breakEvenNetRate = (weightedDisplacedADR + varCost * totalIncrementalRooms) / totalRooms;
+    minRate = (breakEvenNetRate + breakCost + parkCost) / (1 - commPct);
+  }
 
   if (minMaxRooms === Infinity) minMaxRooms = 0;
 
@@ -953,9 +960,9 @@ function renderGroupResults(rows, summary) {
       <div class="sc-sub">${totalNights} nights · ${fmtInt(totalRoomNights)} room-nights</div>
     </div>
     <div class="summary-card sc-gold">
-      <div class="sc-label">Min Acceptable Rate</div>
+      <div class="sc-label">Breakeven Rate</div>
       <div class="sc-value">${fmt$(summary.minRate)}</div>
-      <div class="sc-sub">Rate where block breaks even</div>
+      <div class="sc-sub">Rate where this block nets $0</div>
     </div>
     <div class="summary-card sc-neutral">
       <div class="sc-label">Max Rooms at ${fmt$(summary.proposedRate)}</div>
@@ -1111,6 +1118,7 @@ function calcLNR() {
   const netRate = proposedRate * (1 - commPct) - breakCost - parkCost;
   const qResults = [];
   let grandDisplaced = 0, grandIncremental = 0, grandNet = 0, grandNights = 0;
+  let grandWeightedDisplacedADR = 0;
 
   for (const q of qKeys) {
     const dates = quarters[q];
@@ -1148,7 +1156,7 @@ function calcLNR() {
       normSum += dowNorm[dow];
     }
 
-    let qDisplaced = 0, qIncremental = 0, qNet = 0;
+    let qDisplaced = 0, qIncremental = 0, qNet = 0, qWeightedDisplacedADR = 0;
 
     for (const ds of dates) {
       const dd = decodeDay(prop.d[ds]);
@@ -1170,6 +1178,7 @@ function calcLNR() {
       qDisplaced += displaced;
       qIncremental += incremental;
       qNet += dayNet;
+      qWeightedDisplacedADR += displaced * transientADR;
     }
 
     qResults.push({ q: parseInt(q), rooms: qRooms, displaced: qDisplaced, incremental: qIncremental, net: qNet, days: dates.length });
@@ -1177,12 +1186,17 @@ function calcLNR() {
     grandIncremental += qIncremental;
     grandNet += qNet;
     grandNights += qRooms;
+    grandWeightedDisplacedADR += qWeightedDisplacedADR;
   }
 
-  // Min acceptable rate
-  const allADRs = allDates.map(ds => decodeDay(prop.d[ds]).adr);
-  const maxADR = Math.max(...allADRs);
-  const minRate = Math.max((maxADR + breakCost + parkCost) / (1 - commPct), (varCost + breakCost + parkCost) / (1 - commPct));
+  // Min acceptable rate: solve for rate where annual net impact = $0
+  // Same formula as Group: net_rate = (sum(displaced*ADR) + varCost*totalIncremental) / totalRooms
+  const totalLNRRooms = grandDisplaced + grandIncremental;
+  let minRate = 0;
+  if (totalLNRRooms > 0) {
+    const breakEvenNetRate = (grandWeightedDisplacedADR + varCost * grandIncremental) / totalLNRRooms;
+    minRate = (breakEvenNetRate + breakCost + parkCost) / (1 - commPct);
+  }
 
   renderLNRResults(qResults, { grandDisplaced, grandIncremental, grandNet, grandNights: annualNights, minRate, proposedRate, prop, netRate });
 }
@@ -1201,9 +1215,9 @@ function renderLNRResults(qResults, summary) {
       <div class="sc-sub">${fmtInt(summary.grandNights)} room-nights</div>
     </div>
     <div class="summary-card sc-gold">
-      <div class="sc-label">Min Acceptable Rate</div>
+      <div class="sc-label">Breakeven Rate</div>
       <div class="sc-value">${fmt$(summary.minRate)}</div>
-      <div class="sc-sub">Rate where LNR breaks even</div>
+      <div class="sc-sub">Rate where this LNR nets $0</div>
     </div>
     <div class="summary-card sc-neutral">
       <div class="sc-label">Net Rate After Costs</div>
