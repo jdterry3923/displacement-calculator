@@ -246,6 +246,7 @@
     padding-left: 12px;
     border-left: 2px solid var(--gray-200);
   }
+  .hidden { display: none !important; }
   .toggle-input-group.hidden {
     display: none;
   }
@@ -1040,7 +1041,7 @@ function generateSampleData() {
 
   for (const prop of props) {
     const d = {};
-    for (let dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
+    for (let dt = new Date(start); dt <= end; dt.setUTCDate(dt.getUTCDate() + 1)) {
       const ds = dt.toISOString().split('T')[0];
       const baseOcc = 0.65 + Math.random() * 0.25;
       const baseRooms = Math.floor(prop.keys * baseOcc);
@@ -1234,8 +1235,8 @@ function updateCrewRoomNights() {
   });
 
   let total = 0;
-  for (let d = new Date(checkIn); d < checkOut; d.setDate(d.getDate() + 1)) {
-    const dow = d.getDay();
+  for (let d = new Date(checkIn); d < checkOut; d.setUTCDate(d.getUTCDate() + 1)) {
+    const dow = d.getUTCDay();
     const correctedDow = dow === 0 ? 6 : dow - 1;
     total += dowRooms[correctedDow];
   }
@@ -1331,7 +1332,7 @@ function calcGroup() {
   const nights = [];
   let totIncremental = 0, totDisplaced = 0, totNet = 0;
 
-  for (let d = new Date(ci); d < co; d.setDate(d.getDate() + 1)) {
+  for (let d = new Date(ci); d < co; d.setUTCDate(d.getUTCDate() + 1)) {
     const ds = d.toISOString().split('T')[0];
     const dayData = prop.d[ds];
     if (!dayData) continue;
@@ -1346,7 +1347,7 @@ function calcGroup() {
 
     nights.push({
       date: fmtDate(ds),
-      dow: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][d.getDay() === 0 ? 6 : d.getDay() - 1],
+      dow: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][d.getUTCDay() === 0 ? 6 : d.getUTCDay() - 1],
       occ: baseOcc,
       transientADR,
       available: availKeys,
@@ -1494,9 +1495,9 @@ function calcCrew() {
   const nights = [];
   let totIncremental = 0, totDisplaced = 0, totNet = 0;
 
-  for (let d = new Date(ci); d < co; d.setDate(d.getDate() + 1)) {
+  for (let d = new Date(ci); d < co; d.setUTCDate(d.getUTCDate() + 1)) {
     const ds = d.toISOString().split('T')[0];
-    const dow = d.getDay();
+    const dow = d.getUTCDay();
     const correctedDow = dow === 0 ? 6 : dow - 1;
     const roomsReq = dowRooms[correctedDow];
 
@@ -1678,7 +1679,7 @@ function calcLNR() {
 
     for (const ds of dates) {
       const d = new Date(ds);
-      const dow = d.getDay();
+      const dow = d.getUTCDay();
       const correctedDow = dow === 0 ? 6 : dow - 1;
       daysPerDow[correctedDow]++;
     }
@@ -1693,7 +1694,7 @@ function calcLNR() {
       const avgData = { r: 0, a: 0, n: 0 };
       for (const ds of dates) {
         const d = new Date(ds);
-        const correctedDow = d.getDay() === 0 ? 6 : d.getDay() - 1;
+        const correctedDow = d.getUTCDay() === 0 ? 6 : d.getUTCDay() - 1;
         if (correctedDow === dow) {
           const dayData = prop.d[ds];
           if (dayData) {
