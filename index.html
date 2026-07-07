@@ -79,17 +79,6 @@
     align-items: center;
     gap: 8px;
   }
-  .header-status-stack {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
-  }
-  .data-as-of {
-    font-size: 11px;
-    color: var(--gray-400);
-    font-style: italic;
-  }
   .header-tagline {
     color: var(--gray-400);
     font-size: 12px;
@@ -261,88 +250,6 @@
   .toggle-input-group.hidden {
     display: none;
   }
-
-  /* ── Variable Rooms Table (Group mode day-by-day) ── */
-  .var-rooms-wrap {
-    margin-top: 8px;
-    padding: 12px;
-    border: 1px solid var(--gray-200);
-    border-radius: 6px;
-    background: var(--gray-50, #f8f9fb);
-  }
-  .var-rooms-wrap .var-rooms-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    font-size: 12px;
-    color: var(--gray-500);
-  }
-  .var-rooms-wrap .var-rooms-actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-  .var-rooms-wrap .var-rooms-actions input[type="number"] {
-    width: 70px;
-    padding: 4px 6px;
-    font-size: 12px;
-  }
-  .var-rooms-wrap .var-rooms-actions button {
-    font-size: 12px;
-    padding: 4px 10px;
-    border: 1px solid var(--gray-300, #d4d7dd);
-    background: white;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  .var-rooms-wrap .var-rooms-actions button:hover {
-    background: var(--gray-100, #eef0f3);
-  }
-  .var-rooms-table {
-    max-height: 320px;
-    overflow-y: auto;
-    border: 1px solid var(--gray-200);
-    border-radius: 4px;
-    background: white;
-  }
-  .var-rooms-table table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  .var-rooms-table th {
-    position: sticky;
-    top: 0;
-    background: var(--gray-100, #eef0f3);
-    text-align: left;
-    padding: 6px 10px;
-    font-weight: 600;
-    border-bottom: 1px solid var(--gray-200);
-    z-index: 1;
-  }
-  .var-rooms-table td {
-    padding: 4px 10px;
-    border-bottom: 1px solid var(--gray-100, #eef0f3);
-  }
-  .var-rooms-table td:nth-child(2) {
-    color: var(--gray-500);
-    width: 50px;
-  }
-  .var-rooms-table input[type="number"] {
-    width: 80px;
-    padding: 2px 6px;
-    font-size: 13px;
-    margin: 0;
-  }
-  .var-rooms-summary {
-    margin-top: 8px;
-    font-size: 12px;
-    color: var(--gray-500);
-    display: flex;
-    gap: 16px;
-  }
-  .var-rooms-summary strong { color: var(--navy); }
 
   /* ── DOW Grid ── */
   .dow-grid {
@@ -667,10 +574,7 @@
     </div>
   </div>
   <div class="header-right">
-    <div class="header-status-stack">
-      <div class="data-status" id="dataStatus">Loading data...</div>
-      <div class="data-as-of" id="dataAsOf"></div>
-    </div>
+    <div class="data-status" id="dataStatus">Loading data...</div>
   </div>
 </div>
 
@@ -711,21 +615,7 @@
     </div>
 
     <div class="form-grid">
-      <div class="form-group span-3">
-        <label>Variable Rooms per Night <span class="hint">(enter a different paid-room count for each night — e.g., a ramped block)</span></label>
-        <div class="toggle-switch-wrapper">
-          <label class="toggle-label">Off</label>
-          <label class="toggle-switch">
-            <input type="checkbox" id="gVarToggle">
-            <span class="toggle-slider"></span>
-          </label>
-          <label class="toggle-label">On</label>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-grid">
-      <div class="form-group" id="gFlatRoomsCell">
+      <div class="form-group">
         <label>Paid Rooms per Night</label>
         <input type="number" id="gRooms" value="10" min="1">
         <div class="validation-msg" id="gRoomsWarning"></div>
@@ -737,35 +627,6 @@
       <div class="form-group">
         <label>Proposed Rate ($)</label>
         <input type="number" id="gRate" placeholder="0.00" step="0.01" min="0">
-      </div>
-    </div>
-
-    <div class="form-grid hidden" id="gVarRoomsRow">
-      <div class="form-group span-3">
-        <label>Paid Rooms by Night</label>
-        <div class="var-rooms-wrap">
-          <div class="var-rooms-header">
-            <span id="gVarRangeLabel">Set check-in and check-out dates above to populate the table.</span>
-            <div class="var-rooms-actions">
-              <label style="font-size:12px;color:var(--gray-500);">Fill all:</label>
-              <input type="number" id="gVarFillVal" min="0" placeholder="rooms">
-              <button type="button" id="gVarFillBtn">Apply</button>
-              <button type="button" id="gVarClearBtn">Clear</button>
-            </div>
-          </div>
-          <div class="var-rooms-table" id="gVarRoomsTableWrap">
-            <table>
-              <thead><tr><th>Date</th><th>DOW</th><th>Paid Rooms</th></tr></thead>
-              <tbody id="gVarRoomsBody"></tbody>
-            </table>
-          </div>
-          <div class="var-rooms-summary">
-            <span><strong id="gVarNights">0</strong> nights</span>
-            <span><strong id="gVarTotalRN">0</strong> total room-nights</span>
-            <span>Peak: <strong id="gVarPeak">0</strong></span>
-          </div>
-          <div class="validation-msg" id="gVarRoomsWarning"></div>
-        </div>
       </div>
     </div>
 
@@ -1220,7 +1081,6 @@ async function loadData() {
       DATA_MAX_DATE = dates[dates.length - 1];
       status.textContent = `Live data · ${DATA_MIN_DATE} — ${DATA_MAX_DATE}`;
       status.className = 'data-status loaded';
-      updateDataAsOf();
     } else {
       throw new Error('Failed to fetch');
     }
@@ -1231,7 +1091,6 @@ async function loadData() {
     DATA_MAX_DATE = dates[dates.length - 1];
     status.textContent = `Demo data · ${DATA_MIN_DATE} — ${DATA_MAX_DATE}`;
     status.className = 'data-status loaded';
-    updateDataAsOf();
   }
 
   // Sync keys from DATA into PROP_CONFIG
@@ -1242,19 +1101,6 @@ async function loadData() {
   }
 
   initializeUI();
-}
-
-function updateDataAsOf() {
-  // Pull the "generated" date written by displacement_data_builder.py.
-  // Demo data has no generated field, so we just leave the label empty in that case.
-  const el = document.getElementById('dataAsOf');
-  if (!el) return;
-  if (DATA && DATA.generated) {
-    const [y, m, d] = DATA.generated.split('-');
-    el.textContent = `Data as of ${parseInt(m)}-${parseInt(d)}-${y}`;
-  } else {
-    el.textContent = '';
-  }
 }
 
 function initializeUI() {
@@ -1274,7 +1120,6 @@ function initializeUI() {
   setupRangeListeners();
   setupCrewCalcs();
   setupLNRPatterns();
-  setupGroupVarRooms();
   setupPropChangeListeners();
 }
 
@@ -1433,127 +1278,6 @@ function updateLNRWeightTotal() {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   GROUP MODE — VARIABLE ROOMS PER NIGHT
-   ══════════════════════════════════════════════════════════════ */
-
-function setupGroupVarRooms() {
-  const toggle = document.getElementById('gVarToggle');
-  const flatCell = document.getElementById('gFlatRoomsCell');
-  const varRow = document.getElementById('gVarRoomsRow');
-
-  toggle.addEventListener('change', () => {
-    if (toggle.checked) {
-      flatCell.classList.add('hidden');
-      varRow.classList.remove('hidden');
-      rebuildGroupVarTable();
-    } else {
-      flatCell.classList.remove('hidden');
-      varRow.classList.add('hidden');
-    }
-  });
-
-  document.getElementById('gCheckIn').addEventListener('change', () => {
-    if (toggle.checked) rebuildGroupVarTable();
-  });
-  document.getElementById('gCheckOut').addEventListener('change', () => {
-    if (toggle.checked) rebuildGroupVarTable();
-  });
-
-  document.getElementById('gVarFillBtn').addEventListener('click', () => {
-    const v = parseInt(document.getElementById('gVarFillVal').value) || 0;
-    document.querySelectorAll('#gVarRoomsBody input.var-room-input').forEach(inp => {
-      inp.value = v;
-    });
-    updateGroupVarSummary();
-  });
-
-  document.getElementById('gVarClearBtn').addEventListener('click', () => {
-    document.querySelectorAll('#gVarRoomsBody input.var-room-input').forEach(inp => {
-      inp.value = 0;
-    });
-    updateGroupVarSummary();
-  });
-}
-
-function rebuildGroupVarTable() {
-  const checkIn = document.getElementById('gCheckIn').value;
-  const checkOut = document.getElementById('gCheckOut').value;
-  const body = document.getElementById('gVarRoomsBody');
-  const label = document.getElementById('gVarRangeLabel');
-
-  // Preserve any existing entries keyed by date so we don't wipe values when dates shift slightly.
-  const prev = {};
-  body.querySelectorAll('tr').forEach(tr => {
-    const ds = tr.dataset.date;
-    const inp = tr.querySelector('input.var-room-input');
-    if (ds && inp) prev[ds] = parseInt(inp.value) || 0;
-  });
-
-  body.innerHTML = '';
-
-  if (!checkIn || !checkOut || checkIn >= checkOut) {
-    label.textContent = 'Set check-in and check-out dates above to populate the table.';
-    updateGroupVarSummary();
-    return;
-  }
-
-  const dowNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const ci = new Date(checkIn);
-  const co = new Date(checkOut);
-  const defaultRooms = parseInt(document.getElementById('gRooms').value) || 0;
-  let count = 0;
-
-  for (let d = new Date(ci); d < co; d.setUTCDate(d.getUTCDate() + 1)) {
-    const ds = d.toISOString().split('T')[0];
-    const dow = d.getUTCDay();
-    const correctedDow = dow === 0 ? 6 : dow - 1;
-    const tr = document.createElement('tr');
-    tr.dataset.date = ds;
-    const value = (ds in prev) ? prev[ds] : defaultRooms;
-    tr.innerHTML = `
-      <td>${fmtDate(ds)}</td>
-      <td>${dowNames[correctedDow]}</td>
-      <td><input type="number" class="var-room-input" min="0" value="${value}" data-date="${ds}"></td>
-    `;
-    body.appendChild(tr);
-    count++;
-  }
-
-  label.textContent = `${count} night${count === 1 ? '' : 's'} from ${fmtDate(checkIn)} to ${fmtDate(checkOut)} (checkout night excluded)`;
-
-  body.querySelectorAll('input.var-room-input').forEach(inp => {
-    inp.addEventListener('input', updateGroupVarSummary);
-  });
-
-  updateGroupVarSummary();
-}
-
-function updateGroupVarSummary() {
-  const inputs = document.querySelectorAll('#gVarRoomsBody input.var-room-input');
-  let total = 0, peak = 0, nights = 0;
-  inputs.forEach(inp => {
-    const v = parseInt(inp.value) || 0;
-    total += v;
-    if (v > peak) peak = v;
-    nights++;
-  });
-  document.getElementById('gVarNights').textContent = nights;
-  document.getElementById('gVarTotalRN').textContent = total;
-  document.getElementById('gVarPeak').textContent = peak;
-}
-
-function readGroupVarRooms() {
-  // Returns map of YYYY-MM-DD -> paid rooms count for any night with rooms > 0
-  const map = {};
-  document.querySelectorAll('#gVarRoomsBody input.var-room-input').forEach(inp => {
-    const ds = inp.dataset.date;
-    const v = parseInt(inp.value) || 0;
-    map[ds] = v;
-  });
-  return map;
-}
-
-/* ══════════════════════════════════════════════════════════════
    FORMATTING UTILITIES
    ══════════════════════════════════════════════════════════════ */
 
@@ -1577,40 +1301,23 @@ function calcGroup() {
   const keys = PROP_CONFIG[pid].keys;
   const checkIn = document.getElementById('gCheckIn').value;
   const checkOut = document.getElementById('gCheckOut').value;
-  const flatPaid = parseInt(document.getElementById('gRooms').value) || 0;
+  const paidRooms = parseInt(document.getElementById('gRooms').value) || 0;
   const compRooms = parseInt(document.getElementById('gCompRooms').value) || 0;
+  const roomsReq = paidRooms + compRooms;
   const proposedRate = parseFloat(document.getElementById('gRate').value) || 0;
   const threshold = parseInt(document.getElementById('gThreshold').value) / 100;
-  const variable = document.getElementById('gVarToggle').checked;
-  const varRooms = variable ? readGroupVarRooms() : null;
 
   // Validation
   if (!checkIn || !checkOut) return alert('Enter both check-in and check-out dates.');
   if (checkIn >= checkOut) return alert('Check-out must be after check-in.');
+  if (paidRooms < 1) return alert('Paid rooms must be at least 1.');
   if (compRooms < 0) return alert('Comp rooms cannot be negative.');
-
-  // Peak paid rooms (single night), used for the keys warning
-  let peakPaid;
-  if (variable) {
-    const vals = Object.values(varRooms);
-    if (vals.length === 0) return alert('Enter rooms in the per-night table.');
-    peakPaid = vals.reduce((m, v) => Math.max(m, v), 0);
-    if (peakPaid < 1) return alert('Set at least one night to ≥ 1 paid room.');
-  } else {
-    peakPaid = flatPaid;
-    if (peakPaid < 1) return alert('Paid rooms must be at least 1.');
-  }
-  const peakReq = peakPaid + compRooms;
-  const warnEl = document.getElementById(variable ? 'gVarRoomsWarning' : 'gRoomsWarning');
-  const otherWarnEl = document.getElementById(variable ? 'gRoomsWarning' : 'gVarRoomsWarning');
-  if (otherWarnEl) { otherWarnEl.classList.remove('warning'); otherWarnEl.textContent = ''; }
-  if (peakReq > keys) {
-    warnEl.textContent = `Warning: Peak block (${peakPaid} paid + ${compRooms} comp = ${peakReq}) exceeds property keys (${keys}).`;
-    warnEl.classList.add('warning');
+  if (roomsReq > keys) {
+    document.getElementById('gRoomsWarning').textContent = `Warning: Total block (${paidRooms} paid + ${compRooms} comp = ${roomsReq}) exceeds property keys (${keys}).`;
+    document.getElementById('gRoomsWarning').classList.add('warning');
     return;
   }
-  warnEl.classList.remove('warning');
-  warnEl.textContent = '';
+  document.getElementById('gRoomsWarning').classList.remove('warning');
   if (proposedRate <= 0) return alert('Enter a proposed rate.');
 
   // Date range check
@@ -1637,15 +1344,11 @@ function calcGroup() {
   const compNetRate = -(breakCost + parkCost); // $0 revenue, no commission, still eats breakfast/parking
   const nights = [];
   let totIncremental = 0, totDisplaced = 0, totNet = 0;
-  let totPaidRoomNights = 0;
 
   for (let d = new Date(ci); d < co; d.setUTCDate(d.getUTCDate() + 1)) {
     const ds = d.toISOString().split('T')[0];
     const dayData = prop.d[ds];
     if (!dayData) continue;
-
-    const nightlyPaid = variable ? (varRooms[ds] || 0) : flatPaid;
-    const roomsReq = nightlyPaid + compRooms;
 
     const baseRooms = dayData[0] / 10;
     const transientADR = dayData[1] / 100;
@@ -1657,14 +1360,12 @@ function calcGroup() {
     // Full-night math: paid rooms contribute at netRate, comp rooms contribute at compNetRate.
     // Incremental rooms cost varCost; displaced rooms cost the foregone transientADR.
     // Equivalent to paid*(netRate) + comp*(compNetRate) − incremental*varCost − displaced*transientADR
-    const nightNet = nightlyPaid * netRate + compRooms * compNetRate
+    const nightNet = paidRooms * netRate + compRooms * compNetRate
                      - incremental * varCost - displaced * transientADR;
 
     nights.push({
       date: fmtDate(ds),
       dow: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][d.getUTCDay() === 0 ? 6 : d.getUTCDay() - 1],
-      paidRooms: nightlyPaid,
-      compRooms: compRooms,
       occ: baseOcc,
       transientADR,
       available: availKeys,
@@ -1677,82 +1378,61 @@ function calcGroup() {
     totIncremental += incremental;
     totDisplaced += displaced;
     totNet += nightNet;
-    totPaidRoomNights += nightlyPaid;
   }
 
-  // Breakeven rate (solve for gross rate where totNet = 0). With variable paid rooms
-  // the paid-room-nights term becomes the sum across nights instead of paidRooms × nights.
+  // Calculate breakeven rate (solve for gross rate where totNet = 0)
+  // Σ[paidRooms × grossRate × (1 − commPct)]
+  //   = Σ[paidRooms × (breakCost + parkCost) + compRooms × (breakCost + parkCost)
+  //       + incremental × varCost + displaced × transientADR]
+  // → grossRate = [cost side] / [paidRooms × nights × (1 − commPct)]
   let breakevenRate = null;
   const numNights = nights.length;
-  if (totPaidRoomNights > 0 && numNights > 0 && commPct < 1) {
+  if (paidRooms > 0 && numNights > 0 && commPct < 1) {
     const dispCost = nights.reduce((sum, n) => sum + n.displaced * n.transientADR, 0);
     const incrCost = totIncremental * varCost;
-    const paidBreakPark = totPaidRoomNights * (breakCost + parkCost);
+    const paidBreakPark = paidRooms * numNights * (breakCost + parkCost);
     const compBreakPark = compRooms * numNights * (breakCost + parkCost);
     const totalCost = dispCost + incrCost + paidBreakPark + compBreakPark;
-    breakevenRate = totalCost / (totPaidRoomNights * (1 - commPct));
+    breakevenRate = totalCost / (paidRooms * numNights * (1 - commPct));
   }
 
-  const summary = {
-    totIncremental, totDisplaced, totNet,
-    paidRooms: variable ? null : flatPaid,    // null signals variable-mode for display logic
-    compRooms,
-    numNights,
-    totPaidRoomNights,
-    peakPaid,
-    variable
-  };
-
-  displayGroupResults(nights, summary, proposedRate, breakevenRate, netRate, { commPct, breakCost, parkCost, varCost, compNetRate });
+  displayGroupResults(nights, { totIncremental, totDisplaced, totNet, paidRooms, compRooms, numNights }, proposedRate, breakevenRate, netRate, { commPct, breakCost, parkCost, varCost, compNetRate });
   document.getElementById('gPrintBtn').classList.remove('hidden');
 }
 
 function displayGroupResults(nights, summary, proposedRate, breakevenRate, netRate, costs) {
   const html = [];
-  const isVar = summary.variable;
-  const paidRN = isVar ? summary.totPaidRoomNights : (summary.paidRooms * summary.numNights);
-  const compRN = summary.compRooms * summary.numNights;
 
   // Summary cards
   html.push('<div class="results-summary">');
   html.push(`<div class="card ${summary.totNet >= 0 ? 'positive' : 'negative'}">
     <div class="card-label">Net Impact</div>
     <div class="card-value">${fmt$(summary.totNet)}</div>
-    ${summary.compRooms > 0 ? `<div class="card-detail">Includes ${fmtInt(compRN)} comp room-nights</div>` : ''}
+    ${summary.compRooms > 0 ? `<div class="card-detail">Includes ${fmtInt(summary.compRooms * summary.numNights)} comp room-nights</div>` : ''}
   </div>`);
   html.push(`<div class="card neutral">
     <div class="card-label">Breakeven Rate ${summary.compRooms > 0 ? '<span style="font-size:10px;color:var(--gray-500);">(on paid rooms)</span>' : ''}</div>
     <div class="card-value">${breakevenRate ? fmt$(breakevenRate) : 'N/A'}</div>
   </div>`);
   html.push(`<div class="card neutral">
-    <div class="card-label">${isVar ? 'Peak Paid Rooms' : 'Max Avail Rooms'}</div>
-    <div class="card-value">${fmtInt(isVar ? summary.peakPaid : Math.max(...nights.map(n => n.available)))}</div>
-    ${isVar ? `<div class="card-detail">${fmtInt(paidRN)} paid room-nights total</div>` : ''}
+    <div class="card-label">Max Rooms</div>
+    <div class="card-value">${fmtInt(Math.max(...nights.map(n => n.available)))}</div>
   </div>`);
   html.push(`<div class="card neutral">
     <div class="card-label">Displaced/Incremental</div>
     <div class="card-value">${fmtInt(summary.totDisplaced)} / ${fmtInt(summary.totIncremental)}</div>
-    ${summary.compRooms > 0 ? `<div class="card-detail">${fmtInt(paidRN)} paid + ${fmtInt(compRN)} comp rm-nights</div>` : (isVar ? `<div class="card-detail">${fmtInt(paidRN)} paid rm-nights</div>` : '')}
+    ${summary.compRooms > 0 ? `<div class="card-detail">${fmtInt(summary.paidRooms * summary.numNights)} paid + ${fmtInt(summary.compRooms * summary.numNights)} comp rm-nights</div>` : ''}
   </div>`);
   html.push('</div>');
 
   // Nightly detail table
   html.push('<div class="table-section"><h3>Nightly Detail</h3><div class="table-wrapper"><table>');
-  if (isVar) {
-    html.push('<thead><tr><th>Date</th><th>DOW</th><th>Paid</th><th>Base Occ</th><th>Transient ADR</th><th>Avail</th><th>Incr</th><th>Disp</th><th>Net Rate</th><th>Night Net</th></tr></thead><tbody>');
-    for (const n of nights) {
-      const cls = n.nightNet >= 0 ? '' : 'row-negative';
-      html.push(`<tr class="${cls}"><td>${n.date}</td><td>${n.dow}</td><td>${n.paidRooms}</td><td>${fmtPct(n.occ * 100)}</td><td>${fmt$(n.transientADR)}</td><td>${n.available}</td><td>${n.incremental}</td><td>${n.displaced}</td><td>${fmt$(n.netRate)}</td><td>${fmt$(n.nightNet)}</td></tr>`);
-    }
-    html.push(`<tfoot><tr><td colspan="2">Total</td><td>${fmtInt(paidRN)}</td><td colspan="2"></td><td>${fmtInt(summary.totIncremental)}</td><td>${fmtInt(summary.totDisplaced)}</td><td></td><td>${fmt$(summary.totNet)}</td></tr></tfoot>`);
-  } else {
-    html.push('<thead><tr><th>Date</th><th>DOW</th><th>Base Occ</th><th>Transient ADR</th><th>Avail</th><th>Incr</th><th>Disp</th><th>Net Rate</th><th>Night Net</th></tr></thead><tbody>');
-    for (const n of nights) {
-      const cls = n.nightNet >= 0 ? '' : 'row-negative';
-      html.push(`<tr class="${cls}"><td>${n.date}</td><td>${n.dow}</td><td>${fmtPct(n.occ * 100)}</td><td>${fmt$(n.transientADR)}</td><td>${n.available}</td><td>${n.incremental}</td><td>${n.displaced}</td><td>${fmt$(n.netRate)}</td><td>${fmt$(n.nightNet)}</td></tr>`);
-    }
-    html.push(`<tfoot><tr><td colspan="4">Total</td><td></td><td>${fmtInt(summary.totIncremental)}</td><td>${fmtInt(summary.totDisplaced)}</td><td></td><td>${fmt$(summary.totNet)}</td></tr></tfoot>`);
+  html.push('<thead><tr><th>Date</th><th>DOW</th><th>Base Occ</th><th>Transient ADR</th><th>Avail</th><th>Incr</th><th>Disp</th><th>Net Rate</th><th>Night Net</th></tr></thead><tbody>');
+  for (const n of nights) {
+    const cls = n.nightNet >= 0 ? '' : 'row-negative';
+    html.push(`<tr class="${cls}"><td>${n.date}</td><td>${n.dow}</td><td>${fmtPct(n.occ * 100)}</td><td>${fmt$(n.transientADR)}</td><td>${n.available}</td><td>${n.incremental}</td><td>${n.displaced}</td><td>${fmt$(n.netRate)}</td><td>${fmt$(n.nightNet)}</td></tr>`);
   }
+  html.push(`<tfoot><tr><td colspan="4">Total</td><td></td><td>${fmtInt(summary.totIncremental)}</td><td>${fmtInt(summary.totDisplaced)}</td><td></td><td>${fmt$(summary.totNet)}</td></tr></tfoot>`);
   html.push('</table></div></div>');
 
   // Sensitivity analysis
@@ -1777,18 +1457,6 @@ function resetGroup() {
     el.checked = false;
     el.dispatchEvent(new Event('change'));
   });
-  // Reset variable-rooms mode
-  const varToggle = document.getElementById('gVarToggle');
-  if (varToggle.checked) {
-    varToggle.checked = false;
-    varToggle.dispatchEvent(new Event('change'));
-  }
-  document.getElementById('gVarRoomsBody').innerHTML = '';
-  document.getElementById('gVarRangeLabel').textContent = 'Set check-in and check-out dates above to populate the table.';
-  document.getElementById('gVarFillVal').value = '';
-  updateGroupVarSummary();
-  document.getElementById('gVarRoomsWarning').classList.remove('warning');
-  document.getElementById('gVarRoomsWarning').textContent = '';
   document.getElementById('gRoomsWarning').classList.remove('warning');
   document.getElementById('gRoomsWarning').textContent = '';
   document.getElementById('groupResults').classList.remove('visible');
@@ -2012,28 +1680,9 @@ function calcLNR() {
   const wTotal = dowWeights.reduce((a, b) => a + b, 0);
   const dowNorm = dowWeights.map(w => w / wTotal);
 
-  // LNR is an ANNUAL contract, so clamp the data to a single calendar year.
-  // With the rolling 12-month builder, prop.d now contains BASE_YEAR + NEXT_YEAR;
-  // use today's year (or whatever year has the most complete data).
-  const allPropDates = Object.keys(prop.d).sort();
-  if (allPropDates.length === 0) return alert('No data available for this property.');
-
-  const targetYear = new Date().getFullYear().toString();
-  let allDates = allPropDates.filter(ds => ds.startsWith(targetYear));
-  if (allDates.length === 0) {
-    // Fallback to the first full year available in the data
-    const firstYear = allPropDates[0].slice(0, 4);
-    allDates = allPropDates.filter(ds => ds.startsWith(firstYear));
-  }
-
-  // Count total days of each DOW across the full year — this is the correct
-  // denominator for distributing annual room-nights into quarters.
-  const annualDaysPerDow = [0, 0, 0, 0, 0, 0, 0];
-  for (const ds of allDates) {
-    const d = new Date(ds);
-    const dow = d.getUTCDay() === 0 ? 6 : d.getUTCDay() - 1;
-    annualDaysPerDow[dow]++;
-  }
+  // Get all dates, group by quarter
+  const allDates = Object.keys(prop.d).sort();
+  if (allDates.length === 0) return alert('No data available for this property.');
 
   const quarters = {};
   for (const ds of allDates) {
@@ -2064,11 +1713,7 @@ function calcLNR() {
     let quarterNet = 0;
 
     for (let dow = 0; dow < 7; dow++) {
-      // Room-nights for this DOW in this quarter:
-      //   (annual room-nights for this DOW) × (this quarter's share of annual DOW days)
-      // Example: 100 annual × 1/7 weight × 13 Mondays in Q1 / 52 Mondays in year ≈ 3.57
-      const annualDow = annualDaysPerDow[dow] || 1;
-      const dowRoomNights = (annualNights * dowNorm[dow]) * (daysPerDow[dow] / annualDow);
+      const dowRoomNights = (annualNights * dowNorm[dow]) * (daysPerDow[dow] / dates.length);
       quarterNights += dowRoomNights;
 
       const avgData = { r: 0, a: 0, n: 0 };
@@ -2085,20 +1730,15 @@ function calcLNR() {
         }
       }
 
-      if (avgData.n > 0 && daysPerDow[dow] > 0) {
+      if (avgData.n > 0) {
         const baseRooms = avgData.r / avgData.n / 10;
         const transientADR = avgData.a / avgData.n / 100;
         const avgBaseOcc = baseRooms / keys;
         const availPerNight = Math.max(0, Math.floor(keys * threshold) - baseRooms);
-        // Per-day rooms for this DOW in this quarter
-        const perDayRooms = dowRoomNights / daysPerDow[dow];
-        const perDayIncr = Math.min(perDayRooms, availPerNight);
-        const perDayDisp = perDayRooms - perDayIncr;
-        // Scale per-day net impact up to all days of this DOW in the quarter
-        quarterNet += daysPerDow[dow] * (
-          perDayDisp * (netRate - transientADR) +
-          perDayIncr * (netRate - varCost)
-        );
+        const incremental = Math.min(dowRoomNights / (daysPerDow[dow] || 1), availPerNight);
+        const displaced = dowRoomNights / (daysPerDow[dow] || 1) - incremental;
+
+        quarterNet += displaced * (netRate - transientADR) + incremental * (netRate - varCost);
       }
     }
 
@@ -2203,13 +1843,12 @@ function generateSensitivityTable(mode, proposedRate, netRate, nights, summary, 
       impact = origNet + rateShift * totalNights;
       roomNights = totalNights;
     } else if (mode === 'group') {
-      // Group: rate change only affects paid room revenue; comp cost is fixed.
-      // Use per-night paidRooms so this works for both flat and variable blocks.
+      // Group: rate change only affects paid room revenue; comp cost is fixed
+      const paidRooms = summary.paidRooms || 0;
       const compRooms = summary.compRooms || 0;
       const compNetRate = costs.compNetRate || 0;
       for (const n of nights) {
-        const np = (n.paidRooms !== undefined) ? n.paidRooms : (summary.paidRooms || 0);
-        const nn = np * nr + compRooms * compNetRate
+        const nn = paidRooms * nr + compRooms * compNetRate
                    - n.incremental * varCost - n.displaced * n.transientADR;
         impact += nn;
         roomNights += n.incremental + n.displaced;
@@ -2233,6 +1872,7 @@ function generateSensitivityTable(mode, proposedRate, netRate, nights, summary, 
   html.push('</tbody></table></div></div>');
   return html.join('');
 }
+
 /* ══════════════════════════════════════════════════════════════
    PRINT FUNCTION
    ══════════════════════════════════════════════════════════════ */
@@ -2266,7 +1906,6 @@ function printResults(mode) {
   body.removeChild(footer);
 }
 
-/* ══════════════════════════════════════════════════════════════
 /* ══════════════════════════════════════════════════════════════
    INITIALIZATION
    ══════════════════════════════════════════════════════════════ */
