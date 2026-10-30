@@ -1079,7 +1079,7 @@ async function loadData() {
       const dates = Object.keys(DATA.p).flatMap(pid => Object.keys(DATA.p[pid].d)).sort();
       DATA_MIN_DATE = dates[0];
       DATA_MAX_DATE = dates[dates.length - 1];
-      status.textContent = `Live data · ${DATA_MIN_DATE} — ${DATA_MAX_DATE}`;
+      status.textContent = `Live data · ${DATA_MIN_DATE} — ${DATA_MAX_DATE}` + (DATA.generated ? ` · updated ${DATA.generated}` : '') + ' · budget floor + forecast';
       status.className = 'data-status loaded';
     } else {
       throw new Error('Failed to fetch');
@@ -1372,7 +1372,9 @@ function calcGroup() {
       incremental,
       displaced,
       netRate,
-      nightNet
+      nightNet,
+      basis: dayData.length > 3 ? dayData[3] : null,
+      budgetOcc: dayData.length > 4 ? (dayData[4] / 10) / keys : null
     });
 
     totIncremental += incremental;
@@ -1398,6 +1400,13 @@ function calcGroup() {
 
   displayGroupResults(nights, { totIncremental, totDisplaced, totNet, paidRooms, compRooms, numNights }, proposedRate, breakevenRate, netRate, { commPct, breakCost, parkCost, varCost, compNetRate });
   document.getElementById('gPrintBtn').classList.remove('hidden');
+}
+
+function basisLabel(code) {
+  if (code === 0) return '<span style="color:#15803D;font-weight:600;">Actual</span>';
+  if (code === 1) return '<span style="color:#475569;font-weight:600;">Budget</span>';
+  if (code === 2) return '<span style="color:#D97706;font-weight:600;">Forecast</span>';
+  return '—';
 }
 
 function displayGroupResults(nights, summary, proposedRate, breakevenRate, netRate, costs) {
@@ -1427,13 +1436,14 @@ function displayGroupResults(nights, summary, proposedRate, breakevenRate, netRa
 
   // Nightly detail table
   html.push('<div class="table-section"><h3>Nightly Detail</h3><div class="table-wrapper"><table>');
-  html.push('<thead><tr><th>Date</th><th>DOW</th><th>Base Occ</th><th>Transient ADR</th><th>Avail</th><th>Incr</th><th>Disp</th><th>Net Rate</th><th>Night Net</th></tr></thead><tbody>');
+  html.push('<thead><tr><th>Date</th><th>DOW</th><th>Basis</th><th>Base Occ</th><th>Budget Occ</th><th>Transient ADR</th><th>Avail</th><th>Incr</th><th>Disp</th><th>Net Rate</th><th>Night Net</th></tr></thead><tbody>');
   for (const n of nights) {
     const cls = n.nightNet >= 0 ? '' : 'row-negative';
-    html.push(`<tr class="${cls}"><td>${n.date}</td><td>${n.dow}</td><td>${fmtPct(n.occ * 100)}</td><td>${fmt$(n.transientADR)}</td><td>${n.available}</td><td>${n.incremental}</td><td>${n.displaced}</td><td>${fmt$(n.netRate)}</td><td>${fmt$(n.nightNet)}</td></tr>`);
+    html.push(`<tr class="${cls}"><td>${n.date}</td><td>${n.dow}</td><td>${basisLabel(n.basis)}</td><td>${fmtPct(n.occ * 100)}</td><td>${n.budgetOcc == null ? '—' : fmtPct(n.budgetOcc * 100)}</td><td>${fmt$(n.transientADR)}</td><td>${n.available}</td><td>${n.incremental}</td><td>${n.displaced}</td><td>${fmt$(n.netRate)}</td><td>${fmt$(n.nightNet)}</td></tr>`);
   }
-  html.push(`<tfoot><tr><td colspan="4">Total</td><td></td><td>${fmtInt(summary.totIncremental)}</td><td>${fmtInt(summary.totDisplaced)}</td><td></td><td>${fmt$(summary.totNet)}</td></tr></tfoot>`);
-  html.push('</table></div></div>');
+  html.push(`<tfoot><tr><td colspan="6">Total</td><td></td><td>${fmtInt(summary.totIncremental)}</td><td>${fmtInt(summary.totDisplaced)}</td><td></td><td>${fmt$(summary.totNet)}</td></tr></tfoot>`);
+  html.push('</table></div>');
+  html.push('<div style="font-size:11px;color:var(--gray-500);margin-top:6px;">Basis: <b>Actual</b> = nights already run · <b>Budget</b> = our saved daily budget · <b>Forecast</b> = revenue-management forecast, used only on nights it is above budget.</div></div>');
 
   // Sensitivity analysis
   html.push(generateSensitivityTable('group', proposedRate, netRate, nights, summary, costs));
